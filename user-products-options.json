@@ -1,0 +1,194 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "Esta API se encarga de obtener las opciones de producto vigentes de los usuarios al momento de su consulta.",
+    "version": "0.0.1",
+    "title": "Get User Product Options"
+  },
+  "host": "data-product-options-user.azurewebsites.net",
+  "basePath": "/api",
+  "schemes": ["https"],
+  "paths": {
+    "/v1/product/options": {
+      "post": {
+        "tags": ["application-product-options"],
+        "operationId": "application-product-options",
+        "summary": "resumen de funcionalidad de la API",
+        "description": "Obtiene las opciones de producto vigentes de los usuarios.",
+        "consumes": ["application/json"],
+        "parameters": [
+          {
+            "type": "string",
+            "in": "header",
+            "name": "Authorization",
+            "description": "Bearer token generado en el proceso de autenticación",
+            "required": true
+          },
+          {
+            "type": "string",
+            "in": "header",
+            "name": "subscription-key",
+            "description": "Llave API del cliente consumidor",
+            "required": true
+          },
+          {
+            "type": "string",
+            "in": "header",
+            "name": "uuid",
+            "description": "Identificador único de la petición",
+            "required": true
+          },
+          {
+            "in": "body",
+            "name": "applicationProductOptionsRequest",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ApplicationProductOptionsRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema":{
+              "$ref": "#/definitions/ApplicationProductOptionsResponse"
+            }
+          },
+          "400": {
+            "description": "Invalid Input",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Engine Error",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "ApplicationProductOptionsRequest": {
+      "type": "object",
+      "properties": {
+        "applicationId": {
+          "type": "string",
+          "description": "Identificador de la solicitud de opciones de producto",
+          "example": "32018325-2e02-4b0c-bde1-75e8a99db476"
+        },
+        "userId": {
+          "type": "string", 
+          "description": "Identificador del usuarios cuyas opciones de producto se solicitan.",
+          "example": "32018325-2e02-4b0c-bde1-75e8a99db476"
+        }
+      },
+      "required": [
+        "applicationId",
+        "userId"]
+    },
+    "ApplicationProductOptionsResponse": {
+      "type": "object",
+      "properties": {
+        "productOptions": {
+          "type": "array",
+          "description": "Arreglos de las opciones de producto disponibles",
+          "items": {"$ref": "#/definitions/ProductOption"}        
+        }
+      }
+    },
+    "ProductOption": {
+      "type": "object",
+      "description": "Características de productos disponibles para el usuario.",
+      "properties": {
+        "productOptionClass": {
+          "type": "string",
+          "description": "Clase de producto que se le ofrece al usuario. Consultar catálogo de productos.",
+          "example": "Préstamo"
+        },
+        "productOptionDetails": {
+          "type": "object",
+          "description": "Detalles del producto ofrecido al cliente (depende de ProductClass)",
+          "properties": {
+            "tenor":{
+              "type": "number",
+              "format": "int32",
+              "description": "Plazo de la oferta en meses.",
+              "example": 24
+            },
+            "numberOfPayments":{
+              "type": "number",
+              "format": "int32",
+              "description": "Número de pagos para liquidar el crédito",
+              "example": 24
+            },
+            "annualRate":{
+              "type": "number",
+              "format": "double",
+              "description": "Tasa anual del crédito",
+              "example": 0.32
+            },
+            "minCreditAmount":{
+              "type": "number",
+              "format": "double",
+              "description": "Monto mínimo a prestar",
+              "example": 141000.00
+            },
+            "maxCreditAmount":{
+              "type": "number",
+              "format": "double",
+              "description": "Monto máximo a prestar",
+              "example": 167600.00
+            }
+          }
+        }, 
+        "productOptionExpiration": {
+          "type": "string",
+          "format": "date", 
+          "description": "Fecha de término de vigencia de la opción de producto ofrecida.",          
+          "example": "2021-12-31"
+        }
+      }
+    },
+    "ErrorResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "string",
+          "description": "Código de error",
+          "example": "0056"
+        },
+        "type": {
+          "type": "string",
+          "description": "Tipo de error que se recibe",
+          "example": "security/access-denied"
+        },
+        "status": {
+          "type": "string",
+          "description": "Status http que responde el servicio",
+          "example": "500"
+        },
+        "detail": {
+          "type": "string",
+          "description": "Información detallada del error",
+          "example": "Se detecto un ingreso no autorizado"
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Fecha y hora de la respuesta de error",
+          "example": "2017-07-21T17:32:28Z"
+        },
+        "instance": {
+          "type": "string",
+          "description": "Permite identificar el lugar especifico donde se originó el error",
+          "example": "login/oauth-server"
+        }
+      }
+    }
+  }
+}
+
+
