@@ -1,20 +1,20 @@
 {
   "swagger": "2.0",
   "info": {
-    "description": "Esta API se encarga de obtener las opciones de producto vigentes de los usuarios al momento de su consulta.",
+    "description": "Esta API se encarga de obtener las ofertas de producto vigentes de los usuarios al momento de su consulta.",
     "version": "0.0.1",
-    "title": "Get User Product Options"
+    "title": "Get User Product offers"
   },
-  "host": "data-product-options-user.azurewebsites.net",
+  "host": "data-product-offers-user.azurewebsites.net",
   "basePath": "/api",
   "schemes": ["https"],
   "paths": {
-    "/v1/product/options": {
+    "/v1/product/offers": {
       "post": {
-        "tags": ["application-product-options"],
-        "operationId": "application-product-options",
+        "tags": ["application-product-offers"],
+        "operationId": "application-product-offers",
         "summary": "resumen de funcionalidad de la API",
-        "description": "Obtiene las opciones de producto vigentes de los usuarios.",
+        "description": "Obtiene las ofertas de producto vigentes de los usuarios.",
         "consumes": ["application/json"],
         "parameters": [
           {
@@ -40,10 +40,10 @@
           },
           {
             "in": "body",
-            "name": "applicationProductOptionsRequest",
+            "name": "applicationProductOffersRequest",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/ApplicationProductOptionsRequest"
+              "$ref": "#/definitions/ApplicationProductOffersRequest"
             }
           }
         ],
@@ -51,7 +51,7 @@
           "200": {
             "description": "Success",
             "schema":{
-              "$ref": "#/definitions/ApplicationProductOptionsResponse"
+              "$ref": "#/definitions/ApplicationProductOffersResponse"
             }
           },
           "400": {
@@ -71,17 +71,17 @@
     }
   },
   "definitions": {
-    "ApplicationProductOptionsRequest": {
+    "ApplicationProductOffersRequest": {
       "type": "object",
       "properties": {
         "applicationId": {
           "type": "string",
-          "description": "Identificador de la solicitud de opciones de producto",
+          "description": "Identificador de la solicitud de ofertas de producto",
           "example": "32018325-2e02-4b0c-bde1-75e8a99db476"
         },
         "userId": {
           "type": "string", 
-          "description": "Identificador del usuarios cuyas opciones de producto se solicitan.",
+          "description": "Identificador del usuarios cuyas ofertas de producto se solicitan.",
           "example": "32018325-2e02-4b0c-bde1-75e8a99db476"
         }
       },
@@ -89,26 +89,47 @@
         "applicationId",
         "userId"]
     },
-    "ApplicationProductOptionsResponse": {
+    "ApplicationProductOffersResponse": {
       "type": "object",
       "properties": {
-        "productOptions": {
+        "userContext": {"$ref": "#/definitions/UserContext"},
+        "productOffers": {
           "type": "array",
-          "description": "Arreglos de las opciones de producto disponibles",
-          "items": {"$ref": "#/definitions/ProductOption"}        
+          "description": "Arreglos de las ofertas de producto disponibles",
+          "items": {"$ref": "#/definitions/ProductOffer"}        
         }
       }
     },
-    "ProductOption": {
+    "UserContext": {
+      "type": "object",
+      "description": "Propiedades de contexto del usuario, tanto personales como de usabilidad",
+      "properties" : {
+        "personalContext" : {
+          "type": "number", 
+          "description": "Apertura o no, de recibir llamadas y ofertas nuevas del usuario."
+        },
+        "lifecycleContext": {
+          "type":"array", 
+          "description": "Estado del ciclo de vida de los productos que tiene el usuario.",
+          "items": {"$ref": "#/definitions/Lifecycle"}
+        } 
+      }
+    },
+    "Lifecycle":{
+      "type": "string", 
+      "description": "Uno de los 5 estados que puede tener el usuario en sus productos activos.", 
+      "enum":["ONBOARDING", "FUNDING", "ACTIVE", "DORMANT", "CHURN"]
+    },
+    "ProductOffer": {
       "type": "object",
       "description": "Características de productos disponibles para el usuario.",
       "properties": {
-        "productOptionClass": {
+        "ProductOfferClass": {
           "type": "string",
           "description": "Clase de producto que se le ofrece al usuario. Consultar catálogo de productos.",
           "example": "Préstamo"
         },
-        "productOptionDetails": {
+        "ProductOfferDetails": {
           "type": "object",
           "description": "Detalles del producto ofrecido al cliente (depende de ProductClass)",
           "properties": {
@@ -144,7 +165,7 @@
             }
           }
         }, 
-        "productOptionExpiration": {
+        "ProductOfferExpiration": {
           "type": "string",
           "format": "date", 
           "description": "Fecha de término de vigencia de la opción de producto ofrecida.",          
