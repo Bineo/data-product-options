@@ -1,0 +1,391 @@
+{
+    "swagger": "2.0",
+    "info": {
+      "description": "Esta API se encarga de evaluar una solicitud a través del decision engine y generar una oferta de préstamos personal",
+      "version": "0.0.1",
+      "title": "Personal Loan Risk Analysis"
+    },
+    "host": "data-loan-decision-engine.azurewebsites.net",
+    "basePath": "/api",
+    "schemes": [
+      "https"
+    ],
+    "paths": {
+      "/v1/loans/applications/decision-engine": {
+        "post": {
+          "tags": [
+            "application-risk-evaluation"
+          ],
+          "summary": "resumen de funcionalidad de la API",
+          "description": "Motor de decision que evalúa una solicitud y genera una oferta. Consulta listas negras y buró de crédito internamente para después evaluar el riesgo através del modelo de originación y generar una oferta a partir del ingreso mensual, el monto requerido y el nivel de riesgo del cliente.",
+          "operationId": "application-risk-evaluation",
+          "consumes": [
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "type": "string",
+              "in": "header",
+              "name": "Authorization",
+              "description": "Bearer token generado en el proceso de autenticación",
+              "required": true
+            },
+            {
+              "type": "string",
+              "in": "header",
+              "name": "subscription-key",
+              "description": "Api key del cliente consumidor",
+              "required": true
+            },
+            {
+              "type": "string",
+              "in": "header",
+              "name": "uuid",
+              "description": "Identificador único de la petición",
+              "required": true
+            },
+            {
+              "in": "body",
+              "name": "applicationRiskEvalRequest",
+              "required": true,
+              "schema": {
+                "$ref": "#/definitions/ApplicationRiskEvalRequest"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Success",
+              "schema":{
+                "$ref": "#/definitions/ApplicationRiskEvalResponse"
+              }
+            },
+            "400": {
+              "description": "Invalid Input",
+              "schema": {
+                "$ref": "#/definitions/ErrorResponse"
+              }
+            },
+            "422": {
+              "description": "Invalid RFC",
+              "schema": {
+                "$ref": "#/definitions/ErrorResponse"
+              }
+            },
+            "500": {
+              "description": "Internal Decision Engine Error",
+              "schema": {
+                "$ref": "#/definitions/ErrorResponse"
+              }
+            }
+          }
+        }
+      }
+    },
+   
+    "definitions": {
+      "ApplicationRiskEvalRequest": {
+        "type": "object",
+        "properties": {
+          "applicationId": {
+            "type": "string",
+            "description": "Identificador del prospecto que solicita el prestamo",
+            "example": "32018325-2e02-4b0c-bde1-75e8a99db476"
+          },
+          "party": {
+            "$ref": "#/definitions/Party"
+          },
+          "loan": {
+            "$ref": "#/definitions/Loan"
+          }
+        },
+        "required": [
+          "applicationId",
+          "party",
+          "loan"
+        ]
+      },
+      "Party": {
+        "type": "object",
+        "description": "Datos relacionados al prospecto que solicita el préstamo.",
+        "properties": {
+          "monthlyIncome": {
+            "type": "number",
+            "format": "double",
+            "description": "Monto mensual de percepción por parte del prospecto",
+            "example": 5000.0
+          },
+          "firstName": {
+            "type": "string",
+            "description": "Nombre(s) del prospecto",
+            "maxLength": 100,
+            "example": "Oscar"
+          },
+          "lastName": {
+            "type": "string",
+            "description": "Apellido paterno del prospecto",
+            "maxLength": 50,
+            "example": "Alvarez"
+          },
+          "maternalLastName": {
+            "type": "string",
+            "description": "Apellido materno del prospecto",
+            "maxLength":50,
+            "example": "Zepeda"
+          },
+          "taxId": {
+            "type": "string",
+            "description": "RFC del prospecto",
+            "minLength": 12,
+            "maxLength": 13,
+            "example": "AAZO790915AL6"
+          },
+          "maritalStatus": {
+            "type": "string",
+            "description": "Estado civil de la persona",
+            "maxLength": 20,
+            "enum":[
+              "NO ASIGNADO", "SOLTERO", "CASADO", "OTRO"
+            ],
+            "example": "CASADO"
+          },
+          "gender": {
+            "type": "string",
+            "description": "Genero de la persona",
+            "maxLength": 1,
+            "enum": [
+              "NO ASIGNADO",
+              "FEMENINO",
+              "MASCULINO"
+            ],
+            "example": "FEMENINO"
+          },
+          "employment": {
+            "type": "string",
+            "description": "Ocupación de la persona",
+            "maxLength": 20,
+            "enum":[
+              "INDEPENDIENTE EN SECTOR PRIMARIO (AGRICULTURA, GANADERIA, ETC)",
+              "INDEPENDIENTE CON NEGOCIO PROPIO",
+              "POR HONORARIOS",
+              "ASALARIADO DEL SECTOR PRIVADO",
+              "ASALARIADO DEL SECTOR PUBLICO",
+              "EMPLEADO DEL SECTOR PUBLICO",
+              "DESEMPLEADO",
+              "PENSIONADO IMSS",
+              "PENSIONADO ISSSTE",
+              "PENSIONADO OTROS",
+              "HOGAR",
+              "ESTUDIANTE"
+            ],
+            "example": "POR HONORARIOS"
+          },
+          "address": {
+            "$ref": "#/definitions/Address"
+          }
+        },
+        "required": [
+            "monthlyIncome",
+            "firstName",
+            "lastName",
+            "maritalStatus",
+            "taxId",
+            "employment",
+            "address"
+        ]
+      },
+      "Address": {
+        "type": "object",
+        "properties": {
+          "streetName": {
+            "type": "string",
+            "description": "Nombre de la calle",
+            "maxLength": 50,
+            "example": "Av Coyoacán"
+          },
+          "streetNumber": {
+            "type": "string",
+            "description": "Número exterior del domicilio",
+            "maxLength": 20,
+            "example": "56"
+          },
+          "houseNumber": {
+            "type": "string",
+            "description": "Número interior del domicilio",
+            "maxLength": 20,
+            "example": "205"
+          },
+          "colonyName": {
+            "type": "string",
+            "description": "Colonia del domicilio",
+            "maxLength": 50,
+            "example": "Empacadora"
+          },
+          "stateName": {
+            "type": "string",
+            "description": "Estado del domicilio",
+            "maxLength": 50,
+            "example": "Ciudad de México"
+          },
+          "postalCode": {
+            "type": "string",
+            "description": "Código postal del domicilio",
+            "maxLength": 5,
+            "example": "54070"
+          },
+          "municipalityName": {
+            "type": "string",
+            "description": "Municipio/Alcaldia del domicilio",
+            "maxLength": 50,
+            "example": "Coyoacán"
+          }
+        },
+        "required": [
+          "streetName",
+          "streetNumber",
+          "houseNumber",
+          "colonyName",
+          "stateName",
+          "postalCode",
+          "municipalityName"
+        ]
+      },
+      "Loan": {
+        "type": "object",
+        "description": "Datos relacionados al detalle del préstamo solicitado.",
+        "properties": {
+          "requestedAmount": {
+            "type": "number",
+            "format": "double",
+            "description": "Monto solicitado por el prospecto",
+            "example": 50000.0
+          },
+          "paymentFrequency": {
+            "type": "string",
+            "description": "Frecuencia de pagos que solicita el prospecto para liquidar el préstamo (MENSUAL o QUINCENAL)",
+            "enum": ["MENSUAL", "QUINCENAL"],
+            "example": "MENSUAL"
+          }
+        },
+        "required": [
+            "requestedAmount",
+            "paymentFrequency"
+        ]
+      },
+      "ApplicationRiskEvalResponse": {
+        "type": "object",
+        "properties": {
+          "riskAnalysisResult": {
+            "type": "string",
+            "description": "Resultado del motor de decisión.\n - APPROVED -> El prospecto fue aceptado por el motor de decision y se genera una oferta. \n - REJECTED -> El prospecto fue rechazado por el motor de decision, en cuyo caso, no se genera una oferta y se provee de una razón de rechazo.",
+            "enum": ["APPROVED", "REJECTED"],
+            "example": "APPROVED"
+          },
+          "applicationRejectionDetail":{
+            "type": "string",
+            "description": "Razón por la que la solicitud no está en estado de aceptación. En caso de ser rechazado, provee la razón de rechazo. En caso de aceptación, el campo está vacío",
+            "example": "Monthly payment capacity of the user is less than our smallest offer."
+          },
+          "bestOfferIndex":{
+            "type": "number",
+            "format": "int32",
+            "description": "Indice de la mejor oferta selecionada para el cliente. Con este índice, hay que buscar la oferta dentro del arreglo de ofertas (offers).",
+            "example": 1
+          },
+          "requestedAmount": {
+            "type": "number",
+            "format": "double",
+            "description": "Monto solicitado por el prospecto",
+            "example": 50000.0
+          },
+          "offers": {
+            "type": "array",
+            "description": "Arreglo de todas las ofertas disponibles para el prospecto.",
+            "items": {
+              "$ref": "#/definitions/Offer"
+            }            
+          }
+        }
+      },
+      "Offer":{
+        "type": "object",
+        "description": "Detalle de la oferta generada",
+        "properties": {
+          "offerIndex":{
+            "type": "number",
+            "format": "int32",
+            "description": "Indice de la oferta.",
+            "example": 1
+          },
+          "tenor":{
+            "type": "number",
+            "format": "int32",
+            "description": "Plazo de la oferta en meses.",
+            "example": 24
+          },
+          "numberOfPayments":{
+            "type": "number",
+            "format": "int32",
+            "description": "Número de pagos para liquidar el crédito",
+            "example": 24
+          },
+          "annualRate":{
+            "type": "number",
+            "format": "double",
+            "description": "Tasa anual del crédito",
+            "example": 0.32
+          },
+          "minCreditAmount":{
+            "type": "number",
+            "format": "double",
+            "description": "Monto mínimo a prestar",
+            "example": 141000.00
+          },
+          "maxCreditAmount":{
+            "type": "number",
+            "format": "double",
+            "description": "Monto máximo a prestar",
+            "example": 167600.00
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "Código de error",
+            "example": "0056"
+          },
+          "type": {
+            "type": "string",
+            "description": "Tipo de error que se recibe",
+            "example": "security/access-denied"
+          },
+          "status": {
+            "type": "string",
+            "description": "Status http que responde el servicio",
+            "example": "500"
+          },
+          "detail": {
+            "type": "string",
+            "description": "Información detallada del error",
+            "example": "Se detecto un ingreso no autorizado"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Fecha y hora de la respuesta de error",
+            "example": "2017-07-21T17:32:28Z"
+          },
+          "instance": {
+            "type": "string",
+            "description": "Permite identificar el lugar especifico donde se originó el error",
+            "example": "login/oauth-server"
+          }
+        }
+      }
+    }
+  }
+
+

@@ -1,0 +1,7 @@
+{
+  "definitions":{
+    "Offer":{
+      "availability": "boolean"
+    }
+  }
+}

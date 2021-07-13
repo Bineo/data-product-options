@@ -1,20 +1,20 @@
 {
   "swagger": "2.0",
   "info": {
-    "description": "Esta API se encarga de obtener las ofertas de producto vigentes de los usuarios al momento de su consulta.",
+    "description": "Esta API se encarga de condensar el contexto y productos para los usuarios al momento de su consulta.",
     "version": "0.0.1",
-    "title": "Get User Product offers"
+    "title": "Get User 360"
   },
-  "host": "data-product-offers-user.azurewebsites.net",
+  "host": "data-user-360.azurewebsites.net",
   "basePath": "/api",
   "schemes": ["https"],
   "paths": {
-    "/v1/product/offers": {
+    "/v1/cx/user-360/": {
       "post": {
-        "tags": ["application-product-offers"],
-        "operationId": "application-product-offers",
-        "summary": "resumen de funcionalidad de la API",
-        "description": "Obtiene las ofertas de producto vigentes de los usuarios.",
+        "tags": ["application-user-360"],
+        "operationId": "application-user-360",
+        "summary": "Resumen de funcionalidad de la API",
+        "description": "Obtiene una visión 360 de los usuarios.",
         "consumes": ["application/json"],
         "parameters": [
           {
@@ -71,25 +71,29 @@
     }
   },
   "definitions": {
-    "ApplicationProductOffersRequest": {
+    "ApplicationUser360Request": {
       "type": "object",
       "properties": {
-        "applicationId": {
-          "type": "string",
-          "description": "Identificador de la solicitud de ofertas de producto",
-          "example": "32018325-2e02-4b0c-bde1-75e8a99db476"
-        },
         "userId": {
           "type": "string", 
           "description": "Identificador del usuarios cuyas ofertas de producto se solicitan.",
           "example": "32018325-2e02-4b0c-bde1-75e8a99db476"
+        },
+        "partyId":{
+          "type": "string",
+          "description": "Identificador del ejecutivo (CX) o usuario (Backbase) que hace la petición",
+          "example": "32018325-2e02-4b0c-bde1-75e8a99db476"
+        }, 
+        "applicationId": {
+          "type": "string",
+          "description": "Identificador de la solicitud de ofertas de producto",
+          "example": "32018325-2e02-4b0c-bde1-75e8a99db476"
         }
       },
       "required": [
-        "applicationId",
         "userId"]
     },
-    "ApplicationProductOffersResponse": {
+    "ApplicationUser360Response": {
       "type": "object",
       "properties": {
         "userContext": {"$ref": "#/definitions/UserContext"},
@@ -102,11 +106,29 @@
     },
     "UserContext": {
       "type": "object",
-      "description": "Propiedades de contexto del usuario, tanto personales como de usabilidad",
+      "description": "Propiedades de perfilamiento y contexto del usuario.",
       "properties" : {
-        "personalContext" : {
-          "type": "number", 
-          "description": "Apertura o no, de recibir llamadas y ofertas nuevas del usuario."
+        "userProfile":{
+          "type": "object",
+          "properties":{
+            "Persona": {
+              "type": "string",
+              "enum": ["Maria", "Martha", "David"]
+            }
+          }
+        },
+        "situationContext" : {
+          "type": "object", 
+          "properties": {
+            "overallScore": {
+              "type": "number",
+              "description": "El score calificador entre 0-1, de recibir ofertas."
+            },
+            "tags": {
+              "type": "array",
+              "items": {"$ref": "#/definitions/ContextTag"}
+            }
+          } 
         },
         "lifecycleContext": {
           "type":"array", 
@@ -115,24 +137,34 @@
         } 
       }
     },
+    "ContextTag":{
+      "type": "string",
+      "description": "Ver catálogo de etiquetas para el contexto del usuario."
+    },
     "Lifecycle":{
       "type": "string", 
-      "description": "Uno de los 5 estados que puede tener el usuario en sus productos activos.", 
+      "description": "Uno de los 5 estados que puede tener el usuario en sus productos activos.\nEl  primer elemento siempre es el LifeCycle general.", 
       "enum":["ONBOARDING", "FUNDING", "ACTIVE", "DORMANT", "CHURN"]
     },
     "ProductOffer": {
       "type": "object",
       "description": "Características de productos disponibles para el usuario.",
       "properties": {
-        "ProductOfferClass": {
+        "productOfferClass": {
           "type": "string",
           "description": "Clase de producto que se le ofrece al usuario. Consultar catálogo de productos.",
           "example": "Préstamo"
         },
-        "ProductOfferDetails": {
+        "productOfferDetails": {
           "type": "object",
           "description": "Detalles del producto ofrecido al cliente (depende de ProductClass)",
           "properties": {
+            "offerIndex":{
+              "type": "number",
+              "format": "int32",
+              "description": "Indice de la oferta.",
+              "example": 1
+            },
             "tenor":{
               "type": "number",
               "format": "int32",
@@ -165,7 +197,7 @@
             }
           }
         }, 
-        "ProductOfferExpiration": {
+        "productOfferExpiration": {
           "type": "string",
           "format": "date", 
           "description": "Fecha de término de vigencia de la opción de producto ofrecida.",          
