@@ -101,6 +101,11 @@
           "type": "array",
           "description": "Arreglos de las ofertas de producto disponibles",
           "items": {"$ref": "#/definitions/ProductOffer"}        
+        },
+        "pastOffers":{
+          "type": "array",
+          "description": "Arreglo con un resumen de las ofertas pasadas aceptadas y rechazadas",
+          "items": {"$ref": "#/definitions/PastOffer"}
         }
       }
     },
@@ -204,6 +209,27 @@
           "example": "2021-12-31"
         }
       }
+    },
+    "PastOffer":{
+      "type":"object",
+      "description":"Timeline de ofertas pasadas aceptadas y rechazadas para mejorar entendimiento de la historia del usuario.",
+      "properties": {
+        "numberPastOffers": {
+          "type": "number",
+          "format": "int32",
+          "description": "Número de productos ofrecidos en el pasado al cliente.",
+          "example": 4  
+        },
+        "acceptedPastOffers": {
+          "type": "array",
+          "description": "Ofertas pasadas aceptadas con el timestamp de la fecha de oferta y de aceptación"
+        },
+        "rejectedPastOffers": {
+          "type": "array",
+          "description": "Ofertas pasadas rechazadas con el timestamp de la fecha de oferta y del rechazo"
+        }
+      }
+
     },
     "ErrorResponse": {
       "type": "object",
