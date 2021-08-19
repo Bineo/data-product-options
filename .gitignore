@@ -1,3 +1,9 @@
+### Included by Users. 
+
+.vscode/
+
+
+### Included by Azure Function package in VSCode. 
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
