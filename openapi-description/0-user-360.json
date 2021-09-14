@@ -96,13 +96,15 @@
     "ApplicationUser360Response": {
       "type": "object",
       "properties": {
-        "userContext": {"$ref": "#/definitions/UserContext"},
+        "userContext": {
+          "$ref": "#/definitions/UserContext"},
         "productOffers": {
           "type": "array",
           "description": "Arreglos de las ofertas de producto disponibles",
           "items": {"$ref": "#/definitions/ProductOffer"}        
         },
-        "pastOffers":{
+        // pastInteractions 14-sept-21  _ignore-error
+        "pastOffers":{  
           "type": "array",
           "description": "Arreglo con un resumen de las ofertas pasadas aceptadas y rechazadas",
           "items": {"$ref": "#/definitions/PastOffer"}
@@ -110,15 +112,15 @@
       }
     },
     "UserContext": {
-      "type": "object",
+      "type"       : "object",
       "description": "Propiedades de perfilamiento y contexto del usuario.",
-      "properties" : {
-        "userProfile":{
-          "type": "object",
-          "properties":{
-            "Persona": {
-              "type": "string",
-              "enum": ["Maria", "Martha", "David"]
+      "properties"    : {
+        "userProfile" :{
+          "type"      : "object",
+          "properties": {
+            "Persona" : {
+              "type"  : "string",
+              "enum"  : ["Maria", "Martha", "David"]
             }
           }
         },
@@ -128,6 +130,10 @@
             "overallScore": {
               "type": "number",
               "description": "El score calificador entre 0-1, de recibir ofertas."
+            },
+            // Es nuevo still 14-sept-21
+            "description": {
+              "type": "string"
             },
             "tags": {
               "type": "array",
