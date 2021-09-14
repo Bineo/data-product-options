@@ -103,11 +103,11 @@
           "description": "Arreglos de las ofertas de producto disponibles",
           "items": {"$ref": "#/definitions/ProductOffer"}        
         },
-        // pastInteractions 14-sept-21  _ignore-error
-        "pastOffers":{  
+        "pastOffers": {  
           "type": "array",
           "description": "Arreglo con un resumen de las ofertas pasadas aceptadas y rechazadas",
-          "items": {"$ref": "#/definitions/PastOffer"}
+          "items": {"$ref": "#/definitions/PastOffer"},
+          "properties" : {"rename_to" : "pastInteractions"}
         }
       }
     },
@@ -131,9 +131,11 @@
               "type": "number",
               "description": "El score calificador entre 0-1, de recibir ofertas."
             },
-            // Es nuevo still 14-sept-21
             "description": {
-              "type": "string"
+              "type": "string", 
+              "properties": {
+                "status": "no se ha actualizado en formato"
+              }
             },
             "tags": {
               "type": "array",
