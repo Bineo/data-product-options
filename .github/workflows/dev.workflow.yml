@@ -19,7 +19,7 @@ jobs:
     - name: Checkout GitHub Actions
       uses: actions/checkout@main
       with:  
-      ref : 'dev'
+        ref : 'dev'
      
     - name: Build and push container image to registry
       id  : container-registry
