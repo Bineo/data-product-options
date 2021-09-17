@@ -25,11 +25,12 @@ jobs:
       id  : container-registry
       uses: mr-smithers-excellent/docker-build-push@v5.5
       with: 
-        image   : ${{ env.DOCKER_IMAGE }}
-        registry: ${{ secrets.ACR_HOST }}
-        username: ${{ secrets.REGISTRY_USERNAME }}
-        password: ${{ secrets.REGISTRY_PASSWORD }}
-        tags    : ${{ env.DOCKER_TAG }}
+        dockerfile: dockerfile.ci
+        image     : ${{ env.DOCKER_IMAGE }}
+        registry  : ${{ secrets.ACR_HOST }}
+        username  : ${{ secrets.REGISTRY_USERNAME }}
+        password  : ${{ secrets.REGISTRY_PASSWORD }}
+        tags      : ${{ env.DOCKER_TAG }}
         
     - name: Deploy to App Service
       uses: azure/webapps-deploy@v2
