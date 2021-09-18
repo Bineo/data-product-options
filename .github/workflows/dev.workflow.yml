@@ -17,8 +17,8 @@ jobs:
     
     steps:
     - name: Checkout GitHub Actions
-      uses: actions/checkout@main
-      with:  
+      uses: actions/checkout@v2
+      with:   
         ref : 'dev'
      
     - name: Build and push container image to registry
