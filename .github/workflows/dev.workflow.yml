@@ -6,9 +6,10 @@ on:
       - dev
 
 env:
-  APP_SERVICE_NAME: wap-cx-user-360-dev
   DOCKER_IMAGE    : cx-user-360-webapp
   DOCKER_TAG      : "1.0.0"
+  APP_SERVICE_NAME: wap-cx-user-360-dev
+  
       
 jobs:
   build-and-deploy-dev:
@@ -18,7 +19,7 @@ jobs:
     steps:
     - name: Checkout GitHub Actions
       uses: actions/checkout@v2
-      with:   
+      with: 
         ref : 'dev'
      
     - name: Build and push container image to registry
