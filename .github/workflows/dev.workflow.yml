@@ -6,9 +6,9 @@ on:
       - dev
 
 env:
+  APP_SERVICE_NAME: wap-cx-user-360-dev
   DOCKER_IMAGE    : cx-user-360-webapp
   DOCKER_TAG      : "1.0.0"
-  APP_SERVICE_NAME: wap-cx-user-360-dev
   
       
 jobs:

@@ -3,23 +3,23 @@ name: Build
 on: 
   push:
     branches: 
-      - dev
+      - main
 
 env:
-  APP_SERVICE_NAME: cx-user-360
-  DOCKER_IMAGE    : flaskwebapp
+  APP_SERVICE_NAME: wap-cx-user-360
+  DOCKER_IMAGE    : cx-user-360-webapp
   DOCKER_TAG      : "1.0.0"
       
 jobs:
   build-and-deploy:
-    environment: dev
+    environment: prod
     runs-on    : ubuntu-latest
     
     steps:
     - name: Checkout GitHub Actions
       uses: actions/checkout@v2
       with: 
-        ref : 'dev'
+        ref : 'prod'
      
     - name: Build and push container image to registry
       id  : container-registry

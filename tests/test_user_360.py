@@ -1,8 +1,8 @@
 from unittest import TestCase, main as unit_main
 import requests
 
-URL = "http://localhost:5000/v1/cx-engine/get-user-360"
-# URL = "https://wap-cx-user-360-dev.azurewebsites.net/v1/get-loan-messages"
+# URL = "http://localhost:5000/v1/cx-engine/get-user-360"
+URL = "https://wap-cx-user-360-dev.azurewebsites.net/v1/get-user_360"
 
 
 class TestFilters(TestCase): 
@@ -13,6 +13,8 @@ class TestFilters(TestCase):
             }, 
             "output"    : {
                 'userContext': {
+                    'userName':'Asunción Perez',
+                    'userId'  : '2872',
                     'userProfile': "Marta",
                     'situationContext': {
                         'overallScore': 55, 
@@ -37,7 +39,7 @@ class TestFilters(TestCase):
 
     def test_app_gets_sample(self):
         sample   = self.simple_example()
-        # response = requests.post(URL, json=an_input)
+        # response = requests.post(URL, json=example_request["input"])
         response = requests.post(URL, json=sample["input"])
         obtained = response.json()
         self.assertEqual(obtained, sample["output"])

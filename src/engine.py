@@ -40,7 +40,8 @@ def get_user_360(user_id):
     user_row = users_df.loc[users_df["id"] == user_id]
 
     products_1    = pd.read_feather(SITE/"data"/"sims"/"products.feather")
-    products      = products_1.loc[products_1.userId == user_id, :]
+    products      = (products_1
+        .loc[products_1.userId.astype(str) == user_id, :])
     
     prod_offers   = dataframe_to_list("product-offers", 
             products.loc[~(products.accepted), :])
@@ -49,7 +50,8 @@ def get_user_360(user_id):
             products.loc[products.accepted, :])
 
     tags_df = pd.read_feather(SITE/"data"/"sims"/"tags.feather")
-    tags_ls = list(tags_df.loc[tags_df.userId == user_id]["contextTag"])
+    tags_ls = list(tags_df
+        .loc[tags_df.userId.astype(str) == user_id]["contextTag"])
 
     past_interactions = []
 
