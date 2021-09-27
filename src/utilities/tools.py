@@ -12,23 +12,6 @@ from requests import auth
 
 
 
-def validate_input(payload, input_file):
-    try: 
-        with open(input_file, 'r') as _f:
-            input_schema = json.load(_f)
-        validate(instance=payload, schema=input_schema)
-        an_object = {"error" : False}
-    except (exc.ValidationError, exc.SchemaError) as err:
-        response = {
-            "code"          : "0001",
-            "type"          : "validation/input",
-            "status_code"   : "400",
-            "timestamp"     : str(dt.now()),
-            "instance"      : "input/messages_strategy/invalid_structure",
-            "detail"        : str(err) }
-        an_object = {"error" : 400, "output" : (jsonify(response), 400)}
-    return an_object
-
 
 def select_subdict(a_dict, sub_keys):
     if not sub_keys.is_subset(a_dict.keys()):
@@ -126,3 +109,31 @@ class BearerAuth(auth.AuthBase):
         req.headers["authorization"] = f"Bearer {self.token}"
         return req
 
+
+def validate_input(payload, input_file):
+    try: 
+        with open(input_file, 'r') as _f:
+            input_schema = json.load(_f)
+        validate(instance=payload, schema=input_schema)
+        an_object = {"error" : False}
+    except (exc.ValidationError, exc.SchemaError) as err:
+        response = {
+            "code"          : "0001",
+            "type"          : "validation/input",
+            "status_code"   : "400",
+            "timestamp"     : str(dt.now()),
+            "instance"      : "input/messages_strategy/invalid_structure",
+            "detail"        : str(err) }
+        an_object = {"error" : 400, "output" : (jsonify(response), 400)}
+    return an_object
+
+
+def request_from_response(resp_request): 
+    hdrs_items  = "\r\n".join(f"{k}:{v}" for (k, v) in resp_request.headers.items())
+    request_str = f"{resp_request.method} {resp_request.url}\n{hdrs_items}\r\n\r\n{resp_request.body}"
+
+    return request_str
+
+
+
+    
