@@ -12,6 +12,12 @@ app  = Flask(__name__)
 file_handler = FileHandler(SITE/'data'/'logs'/'errorlog.txt')
 file_handler.setLevel(WARNING)
 
+
+@app.route("/")
+def hello_world():
+    return {"status": "success!", "message":  "version 1.0.1"}
+
+
 @app.route("/v1/cx-engine/get-user-360", methods=["POST", "GET"])
 def get_user_360():
     # return "hello World!"
