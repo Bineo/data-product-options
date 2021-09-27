@@ -21,7 +21,7 @@ def get_user_360():
 
     a_validation = tools.validate_input(an_input, input_file)
     if ("error" in a_validation) and a_validation["error"]:
-        return a_validation["output"]
+        return a_validation["output"] 
 
     b_messages   = engine.process_request(an_input)
     return b_messages

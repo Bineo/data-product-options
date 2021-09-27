@@ -10,7 +10,6 @@ env:
   DOCKER_IMAGE    : cx-user-360-webapp
   DOCKER_TAG      : "1.0.0"
   
-      
 jobs:
   build-and-deploy-dev:
     environment: dev
