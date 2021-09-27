@@ -1,0 +1,15 @@
+{
+  "type"      : "object", 
+  "required": ["user360Request"] ,
+  "properties": {
+    "user360Request" : {
+      "type"      : "object",
+      "required"  : ["userId"],
+      "properties": {
+        "userId"  : { "type" : "string"},
+        "partyId" : { "type" : "string"}
+      }
+    }
+  }
+}
+

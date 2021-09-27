@@ -26,7 +26,7 @@ jobs:
       id  : container-registry
       uses: mr-smithers-excellent/docker-build-push@v5.5
       with: 
-        dockerfile: Dockerfile
+        dockerfile: dockerfile.ci
         image     : ${{ env.DOCKER_IMAGE }}
         tags      : ${{ env.DOCKER_TAG }}
         registry  : ${{ secrets.ACR_HOST }}

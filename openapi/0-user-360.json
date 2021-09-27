@@ -1,70 +1,62 @@
 {
   "swagger": "2.0",
-  "info": {
+  "info"   : {
     "description": "Esta API se encarga de condensar el contexto y productos para los usuarios al momento de su consulta.",
-    "version": "0.0.1",
-    "title": "Get User 360"
+    "version"    : "0.0.1",
+    "title"      : "Get User 360"
   },
-  "host": "data-user-360.azurewebsites.net",
+  "host"    : "data-user-360.azurewebsites.net",
   "basePath": "/api",
-  "schemes": ["https"],
-  "paths": {
+  "schemes" : ["https"],
+  "paths"   : {
     "/v1/cx/user-360/": {
       "post": {
-        "tags": ["application-user-360"],
+        "tags"       : ["application-user-360"],
         "operationId": "application-user-360",
-        "summary": "Resumen de funcionalidad de la API",
+        "summary"    : "Resumen de funcionalidad de la API",
         "description": "Obtiene una visión 360 de los usuarios.",
-        "consumes": ["application/json"],
-        "parameters": [
+        "consumes"   : ["application/json"],
+        "parameters" : [
           {
-            "type": "string",
-            "in": "header",
-            "name": "Authorization",
+            "type"       : "string",
+            "in"         : "header",
+            "name"       : "Authorization",
             "description": "Bearer token generado en el proceso de autenticación",
-            "required": true
+            "required"   : true
           },
           {
-            "type": "string",
-            "in": "header",
-            "name": "subscription-key",
+            "type"       : "string",
+            "in"         : "header",
+            "name"       : "subscription-key",
             "description": "Llave API del cliente consumidor",
-            "required": true
+            "required"   : true
           },
           {
-            "type": "string",
-            "in": "header",
-            "name": "uuid",
+            "type"       : "string",
+            "in"         : "header",
+            "name"       : "uuid",
             "description": "Identificador único de la petición",
-            "required": true
+            "required"   : true
           },
           {
-            "in": "body",
-            "name": "applicationProductOffersRequest",
+            "in"      : "body",
+            "name"    : "user360Request",
             "required": true,
-            "schema": {
-              "$ref": "#/definitions/ApplicationProductOffersRequest"
-            }
+            "schema"  : {"$ref": "#/definitions/ApplicationProductOffersRequest"}
           }
         ],
         "responses": {
           "200": {
             "description": "Success",
-            "schema":{
-              "$ref": "#/definitions/ApplicationProductOffersResponse"
-            }
+            "schema"     : {"$ref": "#/definitions/ApplicationProductOffersResponse"}
           },
           "400": {
             "description": "Invalid Input",
-            "schema": {
-              "$ref": "#/definitions/ErrorResponse"
-            }
+            "schema"     : {"$ref": "#/definitions/ErrorResponse"}
           },
           "500": {
             "description": "Internal Engine Error",
-            "schema": {
-              "$ref": "#/definitions/ErrorResponse"
-            }
+            "schema"     : {"$ref": "#/definitions/ErrorResponse"}
           }
         }
       }
@@ -72,206 +64,197 @@
   },
   "definitions": {
     "ApplicationUser360Request": {
-      "type": "object",
+      "type"      : "object",
       "properties": {
         "userId": {
-          "type": "string", 
+          "type"       : "string",
           "description": "Identificador del usuarios cuyas ofertas de producto se solicitan.",
-          "example": "32018325-2e02-4b0c-bde1-75e8a99db476"
+          "example"    : "32018325-2e02-4b0c-bde1-75e8a99db476"
         },
         "partyId":{
-          "type": "string",
+          "type"       : "string",
           "description": "Identificador del ejecutivo (CX) o usuario (Backbase) que hace la petición",
-          "example": "32018325-2e02-4b0c-bde1-75e8a99db476"
-        }, 
-        "applicationId": {
-          "type": "string",
-          "description": "Identificador de la solicitud de ofertas de producto",
-          "example": "32018325-2e02-4b0c-bde1-75e8a99db476"
+          "example"    : "32018325-2e02-4b0c-bde1-75e8a99db476"
         }
       },
-      "required": [
-        "userId"]
+      "required": ["userId"]
     },
     "ApplicationUser360Response": {
-      "type": "object",
+      "type"      : "object",
       "properties": {
-        "userContext": {
-          "$ref": "#/definitions/UserContext"},
+        "userId"       : {"type": "string"},
+        "userName"     : {"type": "string"},
+        "userContext"  : {"$ref": "#/definitions/UserContext"},
         "productOffers": {
-          "type": "array",
+          "type"       : "array",
           "description": "Arreglos de las ofertas de producto disponibles",
-          "items": {"$ref": "#/definitions/ProductOffer"}        
+          "items"      : {"$ref": "#/definitions/ProductOffer"}
         },
-        "pastOffers": {  
-          "type": "array",
+        "pastInteractions": {  
+          "type"       : "array",
           "description": "Arreglo con un resumen de las ofertas pasadas aceptadas y rechazadas",
-          "items": {"$ref": "#/definitions/PastOffer"},
-          "properties" : {"rename_to" : "pastInteractions"}
+          "items"      : {"$ref": "#/definitions/PastOffer"}
         }
       }
     },
     "UserContext": {
       "type"       : "object",
       "description": "Propiedades de perfilamiento y contexto del usuario.",
-      "properties"    : {
+      "properties" : {
         "userProfile" :{
           "type"      : "object",
           "properties": {
             "Persona" : {
-              "type"  : "string",
-              "enum"  : ["Maria", "Martha", "David"]
+              "type": "string",
+              "enum": ["Maria", "Martha", "David"]
             }
           }
         },
         "situationContext" : {
-          "type": "object", 
+          "type"      : "object",
           "properties": {
             "overallScore": {
-              "type": "number",
+              "type"       : "number",
               "description": "El score calificador entre 0-1, de recibir ofertas."
             },
             "description": {
-              "type": "string", 
-              "properties": {
-                "status": "no se ha actualizado en formato"
-              }
+              "type"      : "string"
             },
             "tags": {
-              "type": "array",
+              "type" : "array",
               "items": {"$ref": "#/definitions/ContextTag"}
             }
           } 
         },
         "lifecycleContext": {
-          "type":"array", 
+          "type"       : "array",
           "description": "Estado del ciclo de vida de los productos que tiene el usuario.",
-          "items": {"$ref": "#/definitions/Lifecycle"}
+          "items"      : {"$ref": "#/definitions/Lifecycle"}
         } 
       }
     },
     "ContextTag":{
-      "type": "string",
+      "type"       : "string",
       "description": "Ver catálogo de etiquetas para el contexto del usuario."
     },
     "Lifecycle":{
-      "type": "string", 
-      "description": "Uno de los 5 estados que puede tener el usuario en sus productos activos.\nEl  primer elemento siempre es el LifeCycle general.", 
-      "enum":["ONBOARDING", "FUNDING", "ACTIVE", "DORMANT", "CHURN"]
+      "type"       : "string",
+      "description": "Uno de los 5 estados que puede tener el usuario en sus productos activos.\nEl  primer elemento siempre es el LifeCycle general.",
+      "enum"       : ["ONBOARDING", "FUNDING", "ACTIVE", "DORMANT", "CHURN"]
     },
     "ProductOffer": {
-      "type": "object",
+      "type"       : "object",
       "description": "Características de productos disponibles para el usuario.",
-      "properties": {
+      "properties" : {
         "productOfferClass": {
-          "type": "string",
+          "type"       : "string",
           "description": "Clase de producto que se le ofrece al usuario. Consultar catálogo de productos.",
-          "example": "Préstamo"
+          "example"    : "Préstamo"
         },
         "productOfferDetails": {
-          "type": "object",
+          "type"       : "object",
           "description": "Detalles del producto ofrecido al cliente (depende de ProductClass)",
-          "properties": {
+          "properties" : {
             "offerIndex":{
-              "type": "number",
-              "format": "int32",
+              "type"       : "number",
+              "format"     : "int32",
               "description": "Indice de la oferta.",
-              "example": 1
+              "example"    : 1
             },
             "tenor":{
-              "type": "number",
-              "format": "int32",
+              "type"       : "number",
+              "format"     : "int32",
               "description": "Plazo de la oferta en meses.",
-              "example": 24
+              "example"    : 24
             },
             "numberOfPayments":{
-              "type": "number",
-              "format": "int32",
+              "type"       : "number",
+              "format"     : "int32",
               "description": "Número de pagos para liquidar el crédito",
-              "example": 24
+              "example"    : 24
             },
             "annualRate":{
-              "type": "number",
-              "format": "double",
+              "type"       : "number",
+              "format"     : "double",
               "description": "Tasa anual del crédito",
-              "example": 0.32
+              "example"    : 0.32
             },
             "minCreditAmount":{
-              "type": "number",
-              "format": "double",
+              "type"       : "number",
+              "format"     : "double",
               "description": "Monto mínimo a prestar",
-              "example": 141000.00
+              "example"    : 141000.00
             },
             "maxCreditAmount":{
-              "type": "number",
-              "format": "double",
+              "type"       : "number",
+              "format"     : "double",
               "description": "Monto máximo a prestar",
-              "example": 167600.00
+              "example"    : 167600.00
             }
           }
         }, 
         "productOfferExpiration": {
-          "type": "string",
-          "format": "date", 
-          "description": "Fecha de término de vigencia de la opción de producto ofrecida.",          
-          "example": "2021-12-31"
+          "type"       : "string",
+          "format"     : "date",
+          "description": "Fecha de término de vigencia de la opción de producto ofrecida.",
+          "example"    : "2021-12-31"
         }
       }
     },
     "PastOffer":{
-      "type":"object",
-      "description":"Timeline de ofertas pasadas aceptadas y rechazadas para mejorar entendimiento de la historia del usuario.",
-      "properties": {
+      "type"       : "object",
+      "description": "Timeline de ofertas pasadas aceptadas y rechazadas para mejorar entendimiento de la historia del usuario.",
+      "properties" : {
         "numberPastOffers": {
-          "type": "number",
-          "format": "int32",
+          "type"       : "number",
+          "format"     : "int32",
           "description": "Número de productos ofrecidos en el pasado al cliente.",
-          "example": 4  
+          "example"    : 4
         },
         "acceptedPastOffers": {
-          "type": "array",
+          "type"       : "array",
           "description": "Ofertas pasadas aceptadas con el timestamp de la fecha de oferta y de aceptación"
         },
         "rejectedPastOffers": {
-          "type": "array",
+          "type"       : "array",
           "description": "Ofertas pasadas rechazadas con el timestamp de la fecha de oferta y del rechazo"
         }
       }
 
     },
     "ErrorResponse": {
-      "type": "object",
+      "type"      : "object",
       "properties": {
         "code": {
-          "type": "string",
+          "type"       : "string",
           "description": "Código de error",
-          "example": "0056"
+          "example"    : "0056"
         },
         "type": {
-          "type": "string",
+          "type"       : "string",
           "description": "Tipo de error que se recibe",
-          "example": "security/access-denied"
+          "example"    : "security/access-denied"
         },
         "status": {
-          "type": "string",
+          "type"       : "string",
           "description": "Status http que responde el servicio",
-          "example": "500"
+          "example"    : "500"
         },
         "detail": {
-          "type": "string",
+          "type"       : "string",
           "description": "Información detallada del error",
-          "example": "Se detecto un ingreso no autorizado"
+          "example"    : "Se detecto un ingreso no autorizado"
         },
         "timestamp": {
-          "type": "string",
-          "format": "date-time",
+          "type"       : "string",
+          "format"     : "date-time",
           "description": "Fecha y hora de la respuesta de error",
-          "example": "2017-07-21T17:32:28Z"
+          "example"    : "2017-07-21T17:32:28Z"
         },
         "instance": {
-          "type": "string",
+          "type"       : "string",
           "description": "Permite identificar el lugar especifico donde se originó el error",
-          "example": "login/oauth-server"
+          "example"    : "login/oauth-server"
         }
       }
     }
