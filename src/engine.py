@@ -40,8 +40,7 @@ def get_user_360(user_id):
     user_row = users_df.loc[users_df["id"] == user_id]
 
     products_1    = pd.read_feather(SITE/"data"/"sims"/"products.feather")
-    products      = (products_1
-        .loc[products_1.userId.astype(str) == user_id, :])
+    products      = products_1.loc[products_1.userId.astype(str) == user_id, :]
     
     prod_offers   = dataframe_to_list("product-offers", 
             products.loc[~(products.accepted), :])

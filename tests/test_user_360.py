@@ -1,8 +1,8 @@
 from unittest import TestCase, main as unit_main
 import requests
 
-# URL = "http://localhost:5000/v1/cx-engine/get-user-360"
-URL = "https://wap-cx-user-360-dev.azurewebsites.net/v1/get-user_360"
+URL = "http://localhost:5000/v1/cx-engine/get-user-360"
+URL = "https://wap-cx-user-360-dev.azurewebsites.net/v1/cx-engine/get-user-360"
 
 
 class TestFilters(TestCase): 
