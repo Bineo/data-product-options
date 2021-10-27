@@ -12,7 +12,6 @@ from requests import auth
 
 
 
-
 def select_subdict(a_dict, sub_keys):
     if not sub_keys.is_subset(a_dict.keys()):
         raise ValueError('Trying to select a subdict with keys not contained on large dict.')
@@ -70,7 +69,7 @@ def shortcut_target(filename, file_ext=None):
     
     file_regex = fr"C:\\.*\.{ ext_regex(file_ext) }"
     with open(filename, "r", encoding="ISO-8859-1") as _f: 
-        a_path = a_path = re.findall(file_regex, _f.read(), flags=re.DOTALL)
+        a_path = re.findall(file_regex, _f.read(), flags=re.DOTALL)
 
     if len(a_path) != 1: 
         raise "Not unique or No shortcut targets found in link."

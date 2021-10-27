@@ -3,7 +3,7 @@ name: Build
 on: 
   push:
     branches: 
-      - main
+      - not-main
 
 env:
   APP_SERVICE_NAME: wap-cx-user-360

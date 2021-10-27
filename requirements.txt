@@ -3,10 +3,13 @@
 # Manually managing azure-functions-worker may cause unexpected issues
 
 python-dotenv
-Flask
-jsonschema
-azure-functions
+
 openpyxl
-requests
 pandas 
 pyarrow
+
+azure-functions
+
+Flask
+jsonschema
+requests

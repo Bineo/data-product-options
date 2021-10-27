@@ -14,13 +14,12 @@ file_handler.setLevel(WARNING)
 
 
 @app.route("/")
-def hello_world():
-    return {"status": "success!", "message":  "version 1.0.1"}
+def base_route():
+    return {"status": "success!", "message":  "version 1.0.3"}
 
 
-@app.route("/v1/cx-engine/get-user-360", methods=["POST", "GET"])
+@app.route("/get-user-360", methods=["POST", "GET"])
 def get_user_360():
-    # return "hello World!"
     an_input   = request.json
     
     input_file = SITE/"openapi"/"0-input-360.json"
@@ -35,4 +34,4 @@ def get_user_360():
 
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0')
+    app.run(host='0.0.0.0', debug=False)

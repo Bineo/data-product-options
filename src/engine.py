@@ -4,6 +4,7 @@
 import os
 from datetime import datetime as dt
 from pathlib import Path
+
 import pandas as pd
 from flask import jsonify
 
@@ -17,7 +18,7 @@ def process_request(an_input):
     try: 
         a_request    = an_input.get("user360Request")
         user_id      = a_request.get("userId")
-        response_360 = get_user_360(user_id)
+        response_360 = get_user_360(user_id, source="tidy")
         return (jsonify(response_360), 200)
     except Exception as err:
         an_error = {
@@ -30,8 +31,11 @@ def process_request(an_input):
     return (jsonify(an_error), 500)
 
 
-def get_user_360(user_id):
-    users_df_1 = pd.read_feather(SITE/"data"/"sims"/"users.feather")
+def get_user_360(user_id, source="tidy"):
+    if source not in ["tidy", "xls"]:
+        raise "SOURCE argument not valid."
+
+    users_df_1 = pd.read_feather(SITE/f"data/sims/users_{source}.feather")
     users_df   = users_df_1.assign(id = users_df_1.id.astype(str))
 
     if user_id not in users_df["id"].values:
@@ -39,7 +43,7 @@ def get_user_360(user_id):
         
     user_row = users_df.loc[users_df["id"] == user_id]
 
-    products_1    = pd.read_feather(SITE/"data"/"sims"/"products.feather")
+    products_1    = pd.read_feather(SITE/f"data/sims/products_{source}.feather")
     products      = products_1.loc[products_1.userId.astype(str) == user_id, :]
     
     prod_offers   = dataframe_to_list("product-offers", 
@@ -48,7 +52,7 @@ def get_user_360(user_id):
     lifecycles    = dataframe_to_list("lifecycles", 
             products.loc[products.accepted, :])
 
-    tags_df = pd.read_feather(SITE/"data"/"sims"/"tags.feather")
+    tags_df = pd.read_feather(SITE/f"data/sims/tags_{source}.feather")
     tags_ls = list(tags_df
         .loc[tags_df.userId.astype(str) == user_id]["contextTag"])
 
@@ -60,11 +64,11 @@ def get_user_360(user_id):
             "userName"        : user_row.iloc[0]["name"],
             "userProfile"     : user_row.iloc[0]["persona"],
             "situationContext": {
-                "overallScore": user_row.iloc[0]["context"],
+                "overallScore": int(user_row.iloc[0]["context"]),
                 "tags"        : tags_ls },
-            "lifecycleContext"  : lifecycles }, 
-        "productOffers"   : prod_offers,
-        "pastInteractions": past_interactions}
+            "lifecycleContext": lifecycles }, 
+        "productOffers"       : prod_offers,
+        "pastInteractions"    : past_interactions}
     return a_response 
 
 
@@ -83,8 +87,8 @@ def dataframe_to_list(df_class, a_df):
     elif df_class == "lifecycles":
         base_keys += ["lifecycle"]
     
-    a_dict_ls = [ { k: val for (k, val) in zip(list(a_df.columns), df_tuple[1:])  
-                if (k in base_keys) or (k in non_base and val != 0) }
+    a_dict_ls = [ { k: str(val) for (k, val) in zip(list(a_df.columns), df_tuple[1:])  
+                if (k in base_keys) or (k in non_base and not pd.isna(val)) }
                 for df_tuple in a_df.itertuples() ]
 
     return a_dict_ls
