@@ -9,7 +9,7 @@ env:
   APP_SERVICE_NAME: wap-cx-user-360-dev
   ACR_HOST        : cxuser360registry.azurecr.io
   DOCKER_IMAGE    : cx-user-360-webapp
-  DOCKER_TAG      : "1.0.3"
+  DOCKER_TAG      : "1.0.4"
   
 jobs:
   build-and-deploy-dev:

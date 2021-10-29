@@ -18,17 +18,23 @@ def process_request(an_input):
     try: 
         a_request    = an_input.get("user360Request")
         user_id      = a_request.get("userId")
-        response_360 = get_user_360(user_id, source="tidy")
-        return (jsonify(response_360), 200)
+        pre_response = get_user_360(user_id, source="tidy")
+        if "status_code" in pre_response:
+            status_code = pre_response["status_code"]
+        else:
+            status_code = 200
+        
     except Exception as err:
-        an_error = {
+        status_code  = 500
+        pre_response = {
             "code"          : "0002",
             "status_code"   : "500",
             "type"          : "internal-error",
             "instance"      : "input/messagess_strategy/internal-error",
             "timestamp"     : str(dt.now()),
             "detail"        : str(err)}
-    return (jsonify(an_error), 500)
+
+    return (pre_response, status_code)
 
 
 def get_user_360(user_id, source="tidy"):
@@ -39,37 +45,44 @@ def get_user_360(user_id, source="tidy"):
     users_df   = users_df_1.assign(id = users_df_1.id.astype(str))
 
     if user_id not in users_df["id"].values:
-        raise "User ID not found"
+        pre_response = {
+            "code"          : "0003", # Decía 0002 para error 500. 
+            "status_code"   : "404",  
+            "type"          : "internal-error",
+            "instance"      : "input/messagess_strategy",   # /internal-error
+            "detail"        : "UserId not found",
+            "timestamp"     : str(dt.now())}
+
+    else:
+        user_row    = users_df.loc[users_df["id"] == user_id]
+
+        products_1  = pd.read_feather(SITE/f"data/sims/products_{source}.feather")
+        products    = products_1.loc[products_1.userId.astype(str) == user_id, :]
         
-    user_row = users_df.loc[users_df["id"] == user_id]
+        prod_offers = dataframe_to_list("product-offers", 
+                products.loc[~(products.accepted), :])
 
-    products_1    = pd.read_feather(SITE/f"data/sims/products_{source}.feather")
-    products      = products_1.loc[products_1.userId.astype(str) == user_id, :]
-    
-    prod_offers   = dataframe_to_list("product-offers", 
-            products.loc[~(products.accepted), :])
+        lifecycles  = dataframe_to_list("lifecycles", 
+                products.loc[products.accepted, :])
 
-    lifecycles    = dataframe_to_list("lifecycles", 
-            products.loc[products.accepted, :])
+        tags_df = pd.read_feather(SITE/f"data/sims/tags_{source}.feather")
+        tags_ls = list(tags_df
+            .loc[tags_df.userId.astype(str) == user_id]["contextTag"])
 
-    tags_df = pd.read_feather(SITE/f"data/sims/tags_{source}.feather")
-    tags_ls = list(tags_df
-        .loc[tags_df.userId.astype(str) == user_id]["contextTag"])
+        past_interactions = []
 
-    past_interactions = []
-
-    a_response = {
-        "userContext" : {
-            "userId"          : user_id, 
-            "userName"        : user_row.iloc[0]["name"],
-            "userProfile"     : user_row.iloc[0]["persona"],
-            "situationContext": {
-                "overallScore": int(user_row.iloc[0]["context"]),
-                "tags"        : tags_ls },
-            "lifecycleContext": lifecycles }, 
-        "productOffers"       : prod_offers,
-        "pastInteractions"    : past_interactions}
-    return a_response 
+        pre_response = {
+            "userContext" : {
+                "userId"          : user_id, 
+                "userName"        : user_row.iloc[0]["name"],
+                "userProfile"     : user_row.iloc[0]["persona"],
+                "situationContext": {
+                    "overallScore": int(user_row.iloc[0]["context"]),
+                    "tags"        : tags_ls },
+                "lifecycleContext": lifecycles }, 
+            "productOffers"       : prod_offers,
+            "pastInteractions"    : past_interactions}
+    return pre_response 
 
 
 

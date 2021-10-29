@@ -1,7 +1,7 @@
 import os
 from pathlib import Path
-from flask import Flask, request
-from logging import basicConfig, FileHandler, WARNING
+from flask   import Flask, request
+from logging import FileHandler, WARNING
 
 from src import engine
 from src.utilities import tools
@@ -15,11 +15,12 @@ file_handler.setLevel(WARNING)
 
 @app.route("/")
 def base_route():
-    return {"status": "success!", "message":  "version 1.0.3"}
+    return {"status": "success!", "message":  "version 1.0.4"}
 
 
 @app.route("/get-user-360", methods=["POST", "GET"])
 def get_user_360():
+    # return "hello World!"
     an_input   = request.json
     
     input_file = SITE/"openapi"/"0-input-360.json"
